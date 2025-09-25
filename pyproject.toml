@@ -1,0 +1,18 @@
+
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zuspec-dm"
+version = "0.0.1"
+dependencies = [
+]
+authors = [
+    {name = "Matthew Ballance", email = "matt.ballance@gmail.com"},
+]
+description = "Zuspec core datamodel"
+license = {file = "LICENSE" }
+
+
+

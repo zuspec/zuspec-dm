@@ -1,15 +1,68 @@
+
 from __future__ import annotations
+import dataclasses as dc
+from typing import Dict, List, Optional
+from ..context import Context as IContext
+from ..data_type import (
+    DataTypeEnum, DataTypeList, DataTypePtr, DataTypeRef,
+    DataTypeString, DataTypeComponent,
+    DataTypeBit, DataTypeInt, DataType
+)
 from .data_type import (
     DataTypeBitVectorImpl, DataTypeStructImpl, DataTypeExprImpl,
-    DataTypeBitVector, DataTypeStruct, DataTypeExpr, DataTypeArray, DataTypeBool
+    DataTypeBitVector, DataTypeStruct, DataTypeExpr, DataTypeArray, DataTypeBool,
+    DataTypeComponentImpl, DataTypeBitImpl, DataTypeIntImpl
+)
+from .fields import (
+    TypeField,
+    TypeFieldInOut
 )
 
-class Context:
+@dc.dataclass
+class Context(IContext):
+    _struct_type_m : Dict[str,DataTypeStruct] = dc.field(default_factory=dict)
+    _bit_type_m : Dict[int,DataTypeBit] = dc.field(default_factory=dict)
+    _int_type_m : Dict[int,DataTypeInt] = dc.field(default_factory=dict)
+
+    def addDataTypeStruct(self, t : DataTypeStruct): 
+        if t.name in self._struct_type_m.keys():
+            raise Exception("Struct type %s already registered" % t.name)
+        self._struct_type_m[t.name] = t
+
+    def findDataTypeStruct(self, name : str) -> Optional[DataTypeStruct]:
+        if name in self._struct_type_m.keys():
+            return self._struct_type_m[name]
+        else:
+            return None
+        
+    def findDataTypeBit(self, sz, create = True) -> Optional[DataTypeBit]:
+        if sz in self._bit_type_m.keys():
+            return self._bit_type_m[sz]
+        elif create:
+            t = DataTypeBitImpl(sz)
+            self._bit_type_m[sz] = t
+            return t
+        else:
+            return None
+
+    def findDataTypeInt(self, sz, create = True) -> Optional[DataTypeInt]:
+        if sz in self._int_type_m.keys():
+            return self._int_type_m[sz]
+        elif create:
+            t = DataTypeIntImpl(sz)
+            self._int_type_m[sz] = t
+            return t
+        else:
+            return None
+
     def mkDataTypeBitVector(self, width: int) -> DataTypeBitVector:
         return DataTypeBitVectorImpl(width)
 
-    def mkDataTypeStruct(self, fields: list[str]) -> DataTypeStruct:
-        return DataTypeStructImpl(fields)
+    def mkDataTypeComponent(self, name : str) -> DataTypeComponent:
+        return DataTypeComponentImpl(name)
+
+    def mkDataTypeStruct(self, name : str) -> DataTypeStruct:
+        return DataTypeStructImpl(name)
 
     def mkDataTypeExpr(self, expr_type: str) -> DataTypeExpr:
         return DataTypeExprImpl(expr_type)
@@ -69,3 +122,11 @@ class Context:
     def mkTypeExprFieldRef(self, field: str) -> TypeExprFieldRef:
         from zuspec.dm.impl.expr import TypeExprFieldRefImpl
         return TypeExprFieldRefImpl(field)
+
+    def mkTypeField(self, name : str, type : DataType) -> TypeField:
+        from .fields import TypeFieldImpl
+        return TypeFieldImpl(name, type)
+
+    def mkTypeFieldInOut(self, name : str, type : DataType, is_out : bool) -> TypeFieldInOut:
+        from .fields import TypeFieldInOutImpl
+        return TypeFieldInOutImpl(name, type, is_out)

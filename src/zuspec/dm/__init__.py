@@ -1,5 +1,9 @@
+
+from .context import Context
+
 from .data_type import (
     DataTypeBitVector,
+    DataTypeComponent,
     DataTypeStruct,
     DataTypeExpr,
     DataTypeArray,
@@ -19,9 +23,15 @@ from .expr import (
     TypeExprRefTopDown,
     TypeExprFieldRef
 )
+from .fields import (
+    TypeField,
+    TypeFieldInOut
+)
 
 __all__ = [
+    "Context",
     "DataTypeBitVector",
+    "DataTypeComponent",
     "DataTypeStruct",
     "DataTypeExpr",
     "DataTypeArray",
@@ -37,5 +47,7 @@ __all__ = [
     "TypeExprBin",
     "TypeExprRefBottomUp",
     "TypeExprRefTopDown",
-    "TypeExprFieldRef"
+    "TypeExprFieldRef",
+    "TypeField",
+    "TypeFieldInOut"
 ]

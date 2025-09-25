@@ -1,6 +1,12 @@
 from __future__ import annotations
-from zuspec.dm.data_type import (
+import dataclasses as dc
+from typing import List, Iterator
+from ..data_type import (
+    DataType,
+    DataTypeBit,
+    DataTypeInt,
     DataTypeBitVector,
+    DataTypeComponent,
     DataTypeStruct,
     DataTypeExpr,
     DataTypeArray,
@@ -13,8 +19,10 @@ from zuspec.dm.data_type import (
     TypeConstraintBlock,
     TypeConstraintExpr,
     TypeConstraintIfElse,
-    Visitor
 )
+from .fields import TypeField, TypeFieldInOut
+
+from ..visitor import Visitor
 
 class DataTypeBitVectorImpl(DataTypeBitVector):
     def __init__(self, width: int) -> None:
@@ -27,16 +35,60 @@ class DataTypeBitVectorImpl(DataTypeBitVector):
     def accept(self, v: Visitor) -> None:
         v.visitDataTypeBitVector(self)
 
-class DataTypeStructImpl(DataTypeStruct):
-    def __init__(self, fields: list[str]) -> None:
-        self._fields = fields
+@dc.dataclass
+class DataTypeBitImpl(DataTypeBit):
+    _bits : int = dc.field()
 
     @property
-    def fields(self) -> list[str]:
-        return self._fields
+    def bits(self) -> int:
+        return self._bits
+    
+    def accept(self, v : Visitor) -> None:
+        v.visitDataTypeBit(self)
+
+@dc.dataclass
+class DataTypeIntImpl(DataTypeInt):
+    _bits : int = dc.field()
+
+    @property
+    def bits(self) -> int:
+        return self._bits
+
+    def accept(self, v : Visitor) -> None:
+        v.visitDataTypeInt(self)
+
+@dc.dataclass
+class DataTypeStructImpl(DataTypeStruct):
+    _name : str = dc.field()
+    _fields : List[TypeField] = dc.field(default_factory=list)
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def fields(self) -> Iterator[TypeField]:
+        return self._fields.__iter__()
+    
+    def numFields(self):
+        return len(self._fields)
+    
+    def getField(self, i):
+        return self._fields[i]
+    
+    def addField(self, f):
+        self._fields.append(f)
 
     def accept(self, v: Visitor) -> None:
         v.visitDataTypeStruct(self)
+
+@dc.dataclass
+class DataTypeComponentImpl(DataTypeComponent, DataTypeStructImpl):
+
+    @property
+    def name(self) -> str:
+        return self._name
+    pass
 
 class DataTypeExprImpl(DataTypeExpr):
     def __init__(self, expr_type: str) -> None:

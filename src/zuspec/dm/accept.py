@@ -1,11 +1,11 @@
 
 import abc
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
     from .visitor import Visitor
 
-class Accept(abc.ABC):
+class Accept(Protocol):
     @abc.abstractmethod
     def accept(self, v : 'Visitor') -> None: ...
 

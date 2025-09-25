@@ -5,11 +5,23 @@ if TYPE_CHECKING:
     from .data_type import (
         DataTypeBitVector, DataTypeStruct, DataTypeExpr, DataTypeArray, DataTypeBool,
         DataTypeEnum, DataTypeList, DataTypePtr, DataTypeRef, DataTypeString,
-        TypeConstraintBlock, TypeConstraintExpr, TypeConstraintIfElse
+        TypeConstraintBlock, TypeConstraintExpr, TypeConstraintIfElse,
+        DataType, DataTypeBit, DataTypeInt
     )
     from .expr import TypeExprBin, TypeExprRefBottomUp, TypeExprRefTopDown, TypeExprFieldRef
+    from .fields import TypeField, TypeFieldInOut
 
 class Visitor:
+
+    def visitDataType(self, obj : DataType) -> None:
+        pass
+
+    def visitDataTypeBit(self, obj : DataTypeBit) -> None:
+        self.visitDataType(obj)
+
+    def visitDataTypeInt(self, obj : DataTypeInt) -> None:
+        self.visitDataType(obj)
+
     def visitDataTypeBitVector(self, obj: "DataTypeBitVector") -> None:
         pass
 
@@ -60,3 +72,10 @@ class Visitor:
 
     def visitTypeExprFieldRef(self, obj: "TypeExprFieldRef") -> None:
         pass
+
+    def visitTypeField(self, obj : TypeField) -> None:
+        obj.dataType.accept(self)
+
+    def visitTypeField(self, obj : TypeFieldInOut) -> None:
+        self.visitTypeField(obj)
+

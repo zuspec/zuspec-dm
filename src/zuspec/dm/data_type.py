@@ -1,7 +1,10 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Protocol
+from typing import Protocol, TYPE_CHECKING, Iterator
 from .accept import Accept
+
+if TYPE_CHECKING:
+    from .fields import TypeField
 
 class DataType(Accept): ...
 
@@ -11,14 +14,44 @@ class DataTypeBitVector(DataType):
     @abstractmethod
     def width(self) -> int: ...
 
+class DataTypeBit(DataType):
+
+    @property
+    @abstractmethod
+    def bits(self) -> int: ...
+
+class DataTypeInt(DataType):
+
+    @property
+    @abstractmethod
+    def bits(self) -> int: ...
 
 class DataTypeStruct(DataType):
     @property
     @abstractmethod
-    def fields(self) -> list[str]:
+    def name(self) -> str: ...
+
+    @property
+    @abstractmethod
+    def fields(self) -> Iterator[TypeField]:
         ...
 
-class DataTypeExpr(ABC, Accept):
+    @abstractmethod
+    def numFields(self) -> int:
+        ...
+
+    @abstractmethod
+    def getField(self, i : int) -> TypeField:
+        ...
+
+    @abstractmethod
+    def addField(self, f : TypeField) -> None:
+        ...
+
+class DataTypeComponent(DataTypeStruct):
+    ...
+
+class DataTypeExpr(Accept):
     @property
     @abstractmethod
     def expr_type(self) -> str:
@@ -84,7 +117,7 @@ class TypeConstraintExpr(TypeConstraint):
     def expr(self) -> str:
         ...
 
-class TypeConstraintIfElse(ABC, Accept):
+class TypeConstraintIfElse(Accept):
     @property
     @abstractmethod
     def condition(self) -> str:
