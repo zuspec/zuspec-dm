@@ -1,28 +1,52 @@
+#****************************************************************************
+# Copyright 2019-2025 Matthew Ballance and contributors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#****************************************************************************
 from __future__ import annotations
-from zuspec.dm.expr import (
+import dataclasses as dc
+from typing import Optional
+from ..expr import (
+    BinOp,
+    TypeExpr,
     TypeExprBin,
     TypeExprRefBottomUp,
     TypeExprRefTopDown,
-    TypeExprFieldRef,
-    Visitor
+    TypeExprFieldRef
 )
+from ..loc import Loc
+from ..visitor import Visitor
 
-class TypeExprBinImpl(TypeExprBin):
-    def __init__(self, left: str, right: str, op: str) -> None:
-        self._left = left
-        self._right = right
-        self._op = op
+@dc.dataclass
+class TypeExprImpl(TypeExpr):
+    _loc : Optional[Loc] = dc.field()
 
-    @property
-    def left(self) -> str:
-        return self._left
-
-    @property
-    def right(self) -> str:
-        return self._right
+@dc.dataclass
+class TypeExprBinImpl(TypeExprBin,TypeExprImpl):
+    _lhs : TypeExpr = dc.field()
+    _op : BinOp = dc.field()
+    _rhs : TypeExpr = dc.field()
 
     @property
-    def op(self) -> str:
+    def left(self) -> TypeExpr:
+        return self._lhs
+
+    @property
+    def right(self) -> TypeExpr:
+        return self._rhs
+
+    @property
+    def op(self) -> BinOp:
         return self._op
 
     def accept(self, v: Visitor) -> None:

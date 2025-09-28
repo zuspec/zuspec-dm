@@ -6,23 +6,31 @@ from ..context import Context as IContext
 from ..data_type import (
     DataTypeEnum, DataTypeList, DataTypePtr, DataTypeRef,
     DataTypeString, DataTypeComponent,
-    DataTypeBit, DataTypeInt, DataType
+    DataTypeBit, DataTypeInt, DataType, DataTypeExtern
 )
 from .data_type import (
     DataTypeBitVectorImpl, DataTypeStructImpl, DataTypeExprImpl,
     DataTypeBitVector, DataTypeStruct, DataTypeExpr, DataTypeArray, DataTypeBool,
-    DataTypeComponentImpl, DataTypeBitImpl, DataTypeIntImpl
+    DataTypeComponentImpl, DataTypeBitImpl, DataTypeIntImpl,
+    DataTypeExternImpl
+)
+from .expr import (
+    TypeExpr,
+    BinOp,
+    TypeExprBin
 )
 from .fields import (
     TypeField,
     TypeFieldInOut
 )
+from ..loc import Loc
 
 @dc.dataclass
 class Context(IContext):
     _struct_type_m : Dict[str,DataTypeStruct] = dc.field(default_factory=dict)
     _bit_type_m : Dict[int,DataTypeBit] = dc.field(default_factory=dict)
     _int_type_m : Dict[int,DataTypeInt] = dc.field(default_factory=dict)
+    _ext_type_m : Dict[str,DataTypeExtern] = dc.field(default_factory=dict)
 
     def addDataTypeStruct(self, t : DataTypeStruct): 
         if t.name in self._struct_type_m.keys():
@@ -51,6 +59,16 @@ class Context(IContext):
         elif create:
             t = DataTypeIntImpl(sz)
             self._int_type_m[sz] = t
+            return t
+        else:
+            return None
+        
+    def findDataTypeExtern(self, name, create = True) -> Optional[DataTypeExtern]:
+        if name in self._ext_type_m.keys():
+            return self._ext_type_m[name]
+        elif create:
+            t = DataTypeExternImpl(name)
+            self._ext_type_m[name] = t
             return t
         else:
             return None
@@ -107,9 +125,13 @@ class Context(IContext):
         from zuspec.dm.impl.data_type import TypeConstraintIfElseImpl
         return TypeConstraintIfElseImpl(condition, if_true, if_false)
 
-    def mkTypeExprBin(self, left: str, right: str, op: str) -> TypeExprBin:
+    def mkTypeExprBin(self, 
+                      lhs: TypeExpr, 
+                      op : BinOp, 
+                      rhs: TypeExpr,
+                      loc : Optional[Loc]=None) -> TypeExprBin:
         from zuspec.dm.impl.expr import TypeExprBinImpl
-        return TypeExprBinImpl(left, right, op)
+        return TypeExprBinImpl(loc, lhs, op, rhs)
 
     def mkTypeExprRefBottomUp(self, ref: str) -> TypeExprRefBottomUp:
         from zuspec.dm.impl.expr import TypeExprRefBottomUpImpl

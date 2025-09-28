@@ -1,8 +1,10 @@
 from __future__ import annotations
 import dataclasses as dc
-from typing import List, Iterator
+from typing import List, Optional, Iterator
+from ..bindset import BindSet
 from ..data_type import (
     DataType,
+    DataTypeExtern,
     DataTypeBit,
     DataTypeInt,
     DataTypeBitVector,
@@ -58,9 +60,22 @@ class DataTypeIntImpl(DataTypeInt):
         v.visitDataTypeInt(self)
 
 @dc.dataclass
+class DataTypeExternImpl(DataTypeExtern):
+    _name : str = dc.field()
+
+    @property
+    def name(self) -> str:
+        return self._name
+    
+    def accept(self, v : Visitor):
+        v.visitDataTypeExtern(self)
+
+
+@dc.dataclass
 class DataTypeStructImpl(DataTypeStruct):
     _name : str = dc.field()
     _fields : List[TypeField] = dc.field(default_factory=list)
+    _bindset : Optional[BindSet] = dc.field(default=None)
 
     @property
     def name(self) -> str:
@@ -79,6 +94,13 @@ class DataTypeStructImpl(DataTypeStruct):
     def addField(self, f):
         self._fields.append(f)
 
+    @property
+    def bindset(self) -> Optional[BindSet]:
+        return self._bindset
+
+    def setBindset(self, b : BindSet) -> None:
+        self._bindset = b
+
     def accept(self, v: Visitor) -> None:
         v.visitDataTypeStruct(self)
 
@@ -88,7 +110,9 @@ class DataTypeComponentImpl(DataTypeComponent, DataTypeStructImpl):
     @property
     def name(self) -> str:
         return self._name
-    pass
+
+    def accept(self, v: Visitor) -> None:
+        v.visitDataTypeComponent(self)    
 
 class DataTypeExprImpl(DataTypeExpr):
     def __init__(self, expr_type: str) -> None:

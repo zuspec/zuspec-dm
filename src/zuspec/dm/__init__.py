@@ -2,6 +2,7 @@
 from .context import Context
 
 from .data_type import (
+    DataType,
     DataTypeBitVector,
     DataTypeComponent,
     DataTypeStruct,
@@ -27,9 +28,14 @@ from .fields import (
     TypeField,
     TypeFieldInOut
 )
+from .loc import Loc
+
+from .visitor import Visitor
 
 __all__ = [
     "Context",
+    "Loc",
+    "DataType",
     "DataTypeBitVector",
     "DataTypeComponent",
     "DataTypeStruct",
@@ -49,5 +55,6 @@ __all__ = [
     "TypeExprRefTopDown",
     "TypeExprFieldRef",
     "TypeField",
-    "TypeFieldInOut"
+    "TypeFieldInOut",
+    "Visitor"
 ]

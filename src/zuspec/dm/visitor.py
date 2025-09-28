@@ -6,7 +6,7 @@ if TYPE_CHECKING:
         DataTypeBitVector, DataTypeStruct, DataTypeExpr, DataTypeArray, DataTypeBool,
         DataTypeEnum, DataTypeList, DataTypePtr, DataTypeRef, DataTypeString,
         TypeConstraintBlock, TypeConstraintExpr, TypeConstraintIfElse,
-        DataType, DataTypeBit, DataTypeInt
+        DataType, DataTypeBit, DataTypeInt, DataTypeExtern, DataTypeComponent
     )
     from .expr import TypeExprBin, TypeExprRefBottomUp, TypeExprRefTopDown, TypeExprFieldRef
     from .fields import TypeField, TypeFieldInOut
@@ -20,6 +20,12 @@ class Visitor:
         self.visitDataType(obj)
 
     def visitDataTypeInt(self, obj : DataTypeInt) -> None:
+        self.visitDataType(obj)
+
+    def visitDataTypeComponent(self, obj : DataTypeComponent) -> None:
+        self.visitDataTypeStruct(obj)
+
+    def visitDataTypeExtern(self, obj : DataTypeExtern) -> None:
         self.visitDataType(obj)
 
     def visitDataTypeBitVector(self, obj: "DataTypeBitVector") -> None:

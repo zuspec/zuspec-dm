@@ -7,11 +7,17 @@ from .data_type import (
     DataTypeBitVector, DataTypeStruct, DataTypeExpr, DataTypeArray, 
     DataTypeBool, DataTypeEnum, DataTypeList, DataTypePtr, DataTypeRef,
     DataTypeString, DataTypeComponent,
-    DataTypeBit, DataTypeInt
+    DataTypeBit, DataTypeInt, DataTypeExtern
+)
+from .expr import (
+    TypeExpr,
+    BinOp,
+    TypeExprBin,
 )
 from .fields import (
     TypeField, TypeFieldInOut
 )
+from .loc import Loc
 
 class Context(Protocol):
 
@@ -26,6 +32,9 @@ class Context(Protocol):
 
     @abc.abstractmethod
     def findDataTypeInt(self, sz : int, create : bool=True) -> Optional[DataTypeInt]: ...
+
+    @abc.abstractmethod
+    def findDataTypeExtern(self, name : str, create : bool=True) -> Optional[DataTypeExtern]: ...
 
     @abc.abstractmethod
     def mkDataTypeBitVector(self, width: int) -> DataTypeBitVector: ...
@@ -70,7 +79,11 @@ class Context(Protocol):
     def mkTypeConstraintIfElse(self, condition: str, if_true: str, if_false: str) -> TypeConstraintIfElse: ...
 
     @abc.abstractmethod
-    def mkTypeExprBin(self, left: str, right: str, op: str) -> TypeExprBin: ...
+    def mkTypeExprBin(self, 
+                      lhs: TypeExpr, 
+                      op : BinOp, 
+                      rhs: TypeExpr,
+                      loc : Optional[Loc] = None) -> TypeExprBin: ...
 
     @abc.abstractmethod
     def mkTypeExprRefBottomUp(self, ref: str) -> TypeExprRefBottomUp: ...

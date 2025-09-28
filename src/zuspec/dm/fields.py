@@ -3,8 +3,9 @@ from __future__ import annotations
 import abc
 from .accept import Accept
 from .data_type import DataType
+from .loc import Locatable
 
-class TypeField(Accept):
+class TypeField(Locatable):
 
     @property
     @abc.abstractmethod

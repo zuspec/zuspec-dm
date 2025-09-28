@@ -1,7 +1,8 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Protocol, TYPE_CHECKING, Iterator
+from typing import Optional, Protocol, TYPE_CHECKING, Iterator
 from .accept import Accept
+from .bindset import BindSet
 
 if TYPE_CHECKING:
     from .fields import TypeField
@@ -26,6 +27,12 @@ class DataTypeInt(DataType):
     @abstractmethod
     def bits(self) -> int: ...
 
+class DataTypeExtern(DataType):
+
+    @property
+    @abstractmethod
+    def name(self) -> str: ...
+
 class DataTypeStruct(DataType):
     @property
     @abstractmethod
@@ -47,6 +54,14 @@ class DataTypeStruct(DataType):
     @abstractmethod
     def addField(self, f : TypeField) -> None:
         ...
+
+    @property
+    @abstractmethod
+    def bindset(self) -> Optional[BindSet]: ...
+
+    @abstractmethod
+    def setBindset(self, b : BindSet) -> None: ...
+
 
 class DataTypeComponent(DataTypeStruct):
     ...
