@@ -8,6 +8,10 @@ if TYPE_CHECKING:
         TypeConstraintBlock, TypeConstraintExpr, TypeConstraintIfElse,
         DataType, DataTypeBit, DataTypeInt, DataTypeExtern, DataTypeComponent
     )
+    from .exec import (
+        Exec, ExecSync, ExecStmt, ExecStmtAssign, ExecStmtExpr, ExecStmtScope,
+        ExecStmtIf, ExecStmtIfElse
+    )
     from .expr import TypeExprBin, TypeExprRefBottomUp, TypeExprRefTopDown, TypeExprFieldRef
     from .fields import TypeField, TypeFieldInOut
 
@@ -57,6 +61,34 @@ class Visitor:
 
     def visitDataTypeString(self, obj: "DataTypeString") -> None:
         pass
+
+    def visitExec(self, obj : Exec) -> None:
+        pass
+
+    def visitExecSync(self, obj : ExecSync) -> None:
+        self.visitExec(obj)
+
+    def visitExecStmt(self, obj : ExecStmt) -> None:
+        pass
+
+    def visitExecStmtExpr(self, obj : ExecStmtExpr) -> None:
+        self.visitExecStmt(obj)
+
+    def visitExecStmtIf(self, obj : ExecStmtIf) -> None:
+        self.visitExecStmt(obj)
+        obj.cond.accept(self)
+        obj.stmt.accept(self)
+        
+    def visitExecStmtIfElse(self, obj : ExecStmtIfElse) -> None:
+        self.visitExecStmt(obj)
+        for ic in obj.if_clauses:
+            ic.accept(self)
+        if obj.else_clause is not None:
+            obj.else_clause.accept(self)
+
+    def visitExecStmtScope(self, obj : ExecStmtScope) -> None:
+        for s in obj.stmts:
+            s.accept(self)
 
     def visitTypeConstraintBlock(self, obj: "TypeConstraintBlock") -> None:
         pass

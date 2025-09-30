@@ -17,24 +17,18 @@ from __future__ import annotations
 import abc
 import enum
 from abc import ABC, abstractmethod
-from typing import Optional, Protocol
+from typing import Optional, Protocol, TYPE_CHECKING
 from .accept import Accept
-from .srcinfo import SrcInfo
+from .loc import Loc
 
-class Visitor(Protocol):
-    def visitTypeExprBin(self, obj: "TypeExprBin") -> None: ...
-    def visitTypeExprRefBottomUp(self, obj: "TypeExprRefBottomUp") -> None: ...
-    def visitTypeExprRefTopDown(self, obj: "TypeExprRefTopDown") -> None: ...
-    def visitTypeExprFieldRef(self, obj: "TypeExprFieldRef") -> None: ...
-
-class Accept(Protocol):
-    def accept(self, v: Visitor) -> None: ...
+if TYPE_CHECKING:
+    from .visitor import Visitor
 
 class TypeExpr(Accept):
 
     @property
     @abc.abstractmethod
-    def loc(self) -> Optional[SrcInfo]: ...
+    def loc(self) -> Optional[Loc]: ...
 
 class BinOp(enum.Enum):
     Add = enum.auto()
@@ -68,6 +62,9 @@ class TypeExprBin(ABC, Accept):
     @property
     @abstractmethod
     def op(self) -> BinOp: ...
+
+class TypeExprRef(Accept):
+    pass
 
 class TypeExprRefBottomUp(ABC, Accept):
     @property

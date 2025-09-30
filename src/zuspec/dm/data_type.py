@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, Protocol, TYPE_CHECKING, Iterator
 from .accept import Accept
 from .bindset import BindSet
+from .exec import Exec
 
 if TYPE_CHECKING:
     from .fields import TypeField
@@ -61,6 +62,20 @@ class DataTypeStruct(DataType):
 
     @abstractmethod
     def setBindset(self, b : BindSet) -> None: ...
+
+    @property
+    @abstractmethod
+    def execs(self) -> Iterator[Exec]: ...
+
+    @property
+    @abstractmethod
+    def numExecs(self) -> int: ...
+
+    @abstractmethod
+    def getExec(self, i : int) -> Exec: ...
+
+    @abstractmethod
+    def addExec(self, e : Exec) -> None: ...
 
 
 class DataTypeComponent(DataTypeStruct):

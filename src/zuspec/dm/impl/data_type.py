@@ -22,6 +22,7 @@ from ..data_type import (
     TypeConstraintExpr,
     TypeConstraintIfElse,
 )
+from ..exec import Exec, ExecSync
 from .fields import TypeField, TypeFieldInOut
 
 from ..visitor import Visitor
@@ -76,6 +77,7 @@ class DataTypeStructImpl(DataTypeStruct):
     _name : str = dc.field()
     _fields : List[TypeField] = dc.field(default_factory=list)
     _bindset : Optional[BindSet] = dc.field(default=None)
+    _execs : List[Exec] = dc.field(default_factory=list)
 
     @property
     def name(self) -> str:
@@ -100,6 +102,20 @@ class DataTypeStructImpl(DataTypeStruct):
 
     def setBindset(self, b : BindSet) -> None:
         self._bindset = b
+
+    @property
+    def execs(self) -> Iterator[Exec]:
+        return self._execs.__iter__()
+
+    @property
+    def numExecs(self) -> int:
+        return len(self._execs)
+
+    def getExec(self, i : int) -> Exec:
+        return self._execs[i]
+
+    def addExec(self, e : Exec) -> None:
+        self._execs.append(e)
 
     def accept(self, v: Visitor) -> None:
         v.visitDataTypeStruct(self)

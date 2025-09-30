@@ -1,13 +1,17 @@
 
 from __future__ import annotations
 import abc
-from typing import Optional, Protocol
+from typing import Optional, List, Protocol, Iterable
 from .data_type import (
     DataType,
     DataTypeBitVector, DataTypeStruct, DataTypeExpr, DataTypeArray, 
     DataTypeBool, DataTypeEnum, DataTypeList, DataTypePtr, DataTypeRef,
     DataTypeString, DataTypeComponent,
     DataTypeBit, DataTypeInt, DataTypeExtern
+)
+from .exec import (
+    Exec, ExecSync, ExecStmt, ExecStmtExpr, ExecStmtIf, ExecStmtIfElse, 
+    ExecStmtAssign, ExecStmtScope
 )
 from .expr import (
     TypeExpr,
@@ -68,6 +72,27 @@ class Context(Protocol):
 
     @abc.abstractmethod
     def mkDataTypeString(self, value: str) -> DataTypeString: ...
+
+    @abc.abstractmethod
+    def mkExecStmtExpr(self, expr : TypeExpr, loc : Optional[Loc] = None) -> ExecStmtExpr: ...
+
+    @abc.abstractmethod
+    def mkExecStmtAssign(self, targets : List[TypeExpr], value : TypeExpr, loc : Optional[Loc] = None) -> ExecStmtAssign: ...
+
+    @abc.abstractmethod
+    def mkExecStmtIf(self, cond : TypeExpr, stmt : ExecStmt, loc : Optional[Loc] = None) -> ExecStmtIf: ...
+
+    @abc.abstractmethod
+    def mkExecStmtIfElse(self, 
+                         if_clauses : List[ExecStmtIf], 
+                         else_clause : Optional[ExecStmt] = None,
+                         loc : Optional[Loc] = None) -> ExecStmtIfElse: ...
+    
+    @abc.abstractmethod
+    def mkExecStmtScope(self, loc : Optional[Loc] = None) -> ExecStmtScope: ...
+
+    @abc.abstractmethod
+    def mkExecSync(self, clock : TypeExpr, reset : TypeExpr, loc : Optional[Loc] = None) -> ExecSync: ...
 
     @abc.abstractmethod
     def mkTypeConstraintBlock(self, constraints: list[str]) -> TypeConstraintBlock: ...

@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 import dataclasses as dc
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Iterable
 from ..context import Context as IContext
 from ..data_type import (
     DataTypeEnum, DataTypeList, DataTypePtr, DataTypeRef,
@@ -13,6 +13,10 @@ from .data_type import (
     DataTypeBitVector, DataTypeStruct, DataTypeExpr, DataTypeArray, DataTypeBool,
     DataTypeComponentImpl, DataTypeBitImpl, DataTypeIntImpl,
     DataTypeExternImpl
+)
+from .exec import (
+    Exec, ExecSync, ExecStmt, ExecStmtAssign, ExecStmtExpr, ExecStmtIf,
+    ExecStmtIfElse, ExecStmtScope
 )
 from .expr import (
     TypeExpr,
@@ -112,6 +116,33 @@ class Context(IContext):
     def mkDataTypeString(self, value: str) -> DataTypeString:
         from zuspec.dm.impl.data_type import DataTypeStringImpl
         return DataTypeStringImpl(value)
+
+    def mkExecStmtIf(self, cond : TypeExpr, stmt : ExecStmt, loc : Optional[Loc] = None) -> ExecStmtIf:
+        from .exec import ExecStmtIfImpl
+        return ExecStmtIfImpl(loc, cond, stmt)
+
+    def mkExecStmtIfElse(self, 
+                         if_clauses : List[ExecStmtIf], 
+                         else_clause : Optional[ExecStmt] = None,
+                         loc : Optional[Loc] = None) -> ExecStmtIfElse:
+        from .exec import ExecStmtIfElseImpl
+        return ExecStmtIfElseImpl(loc, if_clauses, else_clause)
+
+    def mkExecStmtExpr(self, expr : TypeExpr, loc : Optional[Loc] = None) -> ExecStmtExpr:
+        from .exec import ExecStmtExprImpl
+        return ExecStmtExprImpl(loc, expr)
+
+    def mkExecStmtAssign(self, targets : List[TypeExpr], value : TypeExpr, loc : Optional[Loc] = None) -> ExecStmtAssign:
+        from .exec import ExecStmtAssignImpl
+        return ExecStmtAssignImpl(loc, value, targets)
+
+    def mkExecStmtScope(self, loc : Optional[Loc] = None) -> ExecStmtScope:
+        from .exec import ExecStmtScopeImpl
+        return ExecStmtScopeImpl(loc)
+    
+    def mkExecSync(self, clock : TypeExpr, reset : TypeExpr, loc : Optional[Loc] = None) -> ExecSync:
+        from .exec import ExecSyncImpl
+        return ExecSyncImpl(_clock=clock, _reset=reset, _loc=loc)
 
     def mkTypeConstraintBlock(self, constraints: list[str]) -> TypeConstraintBlock:
         from zuspec.dm.impl.data_type import TypeConstraintBlockImpl
