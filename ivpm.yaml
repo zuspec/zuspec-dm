@@ -5,10 +5,6 @@ package:
   dep-sets:
   - name: default-dev
     deps:
-    - name: zuspec-arl-dm
-      url: https://github.com/zuspec/zuspec-arl-dm.git
     - name: zuspec-dev-docs
       url: https://github.com/zuspec/zuspec-dev-docs.git
-        #    - name: libvsc
-        #      url: https://github.com/vsc-tools/libvsc.git
 
