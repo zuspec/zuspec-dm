@@ -12,7 +12,10 @@ if TYPE_CHECKING:
         Exec, ExecSync, ExecStmt, ExecStmtAssign, ExecStmtExpr, ExecStmtScope,
         ExecStmtIf, ExecStmtIfElse
     )
-    from .expr import TypeExprBin, TypeExprRefBottomUp, TypeExprRefTopDown, TypeExprFieldRef
+    from .expr import (
+        TypeExprBin, TypeExprRefBottomUp, TypeExprRefTopDown, TypeExprFieldRef,
+        TypeExprRefPy
+    )
     from .fields import TypeField, TypeFieldInOut
 
 class Visitor:
@@ -100,6 +103,9 @@ class Visitor:
         pass
 
     def visitTypeExprBin(self, obj: "TypeExprBin") -> None:
+        pass
+
+    def visitTypeExprRefPy(self, obj : TypeExprRefPy) -> None:
         pass
 
     def visitTypeExprRefBottomUp(self, obj: "TypeExprRefBottomUp") -> None:

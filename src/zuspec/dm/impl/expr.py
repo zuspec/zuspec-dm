@@ -20,6 +20,7 @@ from ..expr import (
     BinOp,
     TypeExpr,
     TypeExprBin,
+    TypeExprRefPy,
     TypeExprRefBottomUp,
     TypeExprRefTopDown,
     TypeExprFieldRef
@@ -30,6 +31,10 @@ from ..visitor import Visitor
 @dc.dataclass
 class TypeExprImpl(TypeExpr):
     _loc : Optional[Loc] = dc.field()
+
+    @property
+    def loc(self) -> Optional[Loc]:
+        return self._loc
 
 @dc.dataclass
 class TypeExprBinImpl(TypeExprBin,TypeExprImpl):
@@ -51,6 +56,17 @@ class TypeExprBinImpl(TypeExprBin,TypeExprImpl):
 
     def accept(self, v: Visitor) -> None:
         v.visitTypeExprBin(self)
+
+@dc.dataclass
+class TypeExprRefPyImpl(TypeExprRefPy,TypeExprImpl):
+    _ref : str = dc.field(default="")
+
+    @property
+    def ref(self) -> str:
+        return self._ref
+    
+    def accept(self, v : Visitor) -> None:
+        v.visitTypeExprRefPy(self)
 
 class TypeExprRefBottomUpImpl(TypeExprRefBottomUp):
     def __init__(self, ref: str) -> None:

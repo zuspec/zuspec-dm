@@ -1,7 +1,7 @@
 
 import abc
 from typing import Iterator, Optional
-from .expr import TypeExpr
+from .expr import TypeExpr, TypeExprRefPy
 from .loc import Locatable
 
 class ExecStmt(Locatable): ...
@@ -72,6 +72,10 @@ class Exec(Locatable):
 
     @abc.abstractmethod
     def getStmt(stmt, i : int) -> ExecStmt: ...
+
+    @property
+    @abc.abstractmethod
+    def ref(self) -> Optional[TypeExprRefPy]: ...
 
 class ExecSync(Exec):
 

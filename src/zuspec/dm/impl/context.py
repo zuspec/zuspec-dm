@@ -18,10 +18,11 @@ from .exec import (
     Exec, ExecSync, ExecStmt, ExecStmtAssign, ExecStmtExpr, ExecStmtIf,
     ExecStmtIfElse, ExecStmtScope
 )
-from .expr import (
+from ..expr import (
     TypeExpr,
     BinOp,
-    TypeExprBin
+    TypeExprBin,
+    TypeExprRefPy
 )
 from .fields import (
     TypeField,
@@ -139,10 +140,23 @@ class Context(IContext):
     def mkExecStmtScope(self, loc : Optional[Loc] = None) -> ExecStmtScope:
         from .exec import ExecStmtScopeImpl
         return ExecStmtScopeImpl(loc)
-    
-    def mkExecSync(self, clock : TypeExpr, reset : TypeExpr, loc : Optional[Loc] = None) -> ExecSync:
+
+    def mkExec(self,
+                   ref : Optional[TypeExprRefPy] = None,
+                   loc : Optional[Loc] = None) -> Exec:
+        from .exec import ExecImpl
+        return ExecImpl(_loc=loc, _ref=ref)
+
+    def mkExecSync(self, 
+                   clock : TypeExpr, 
+                   reset : TypeExpr, 
+                   ref : Optional[TypeExprRefPy] = None,
+                   loc : Optional[Loc] = None) -> ExecSync:
         from .exec import ExecSyncImpl
-        return ExecSyncImpl(_clock=clock, _reset=reset, _loc=loc)
+        return ExecSyncImpl(
+            _loc=loc,
+            _ref=ref,
+            _clock=clock, _reset=reset)
 
     def mkTypeConstraintBlock(self, constraints: list[str]) -> TypeConstraintBlock:
         from zuspec.dm.impl.data_type import TypeConstraintBlockImpl
@@ -163,6 +177,10 @@ class Context(IContext):
                       loc : Optional[Loc]=None) -> TypeExprBin:
         from zuspec.dm.impl.expr import TypeExprBinImpl
         return TypeExprBinImpl(loc, lhs, op, rhs)
+
+    def mkTypeExprRefPy(self, ref : str, loc : Optional[Loc] = None) -> TypeExprRefPy:
+        from .expr import TypeExprRefPyImpl
+        return TypeExprRefPyImpl(loc, ref)
 
     def mkTypeExprRefBottomUp(self, ref: str) -> TypeExprRefBottomUp:
         from zuspec.dm.impl.expr import TypeExprRefBottomUpImpl

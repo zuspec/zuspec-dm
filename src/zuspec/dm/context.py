@@ -17,6 +17,7 @@ from .expr import (
     TypeExpr,
     BinOp,
     TypeExprBin,
+    TypeExprRefPy
 )
 from .fields import (
     TypeField, TypeFieldInOut
@@ -92,7 +93,16 @@ class Context(Protocol):
     def mkExecStmtScope(self, loc : Optional[Loc] = None) -> ExecStmtScope: ...
 
     @abc.abstractmethod
-    def mkExecSync(self, clock : TypeExpr, reset : TypeExpr, loc : Optional[Loc] = None) -> ExecSync: ...
+    def mkExec(self,
+                   ref : Optional[TypeExprRefPy] = None,
+                   loc : Optional[Loc] = None) -> Exec: ...
+
+    @abc.abstractmethod
+    def mkExecSync(self, 
+                   clock : TypeExpr, 
+                   reset : TypeExpr, 
+                   ref : Optional[TypeExprRefPy] = None,
+                   loc : Optional[Loc] = None) -> ExecSync: ...
 
     @abc.abstractmethod
     def mkTypeConstraintBlock(self, constraints: list[str]) -> TypeConstraintBlock: ...
@@ -109,6 +119,9 @@ class Context(Protocol):
                       op : BinOp, 
                       rhs: TypeExpr,
                       loc : Optional[Loc] = None) -> TypeExprBin: ...
+
+    @abc.abstractmethod
+    def mkTypeExprRefPy(self, ref: str, loc : Optional[Loc] = None) -> TypeExprRefPy: ...
 
     @abc.abstractmethod
     def mkTypeExprRefBottomUp(self, ref: str) -> TypeExprRefBottomUp: ...

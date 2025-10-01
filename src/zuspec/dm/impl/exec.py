@@ -5,7 +5,7 @@ from ..exec import (
     Exec, ExecStmt, ExecStmtAssign, ExecStmtExpr, ExecStmtScope, ExecSync,
     ExecStmtIf, ExecStmtIfElse
 )
-from .expr import TypeExpr
+from .expr import TypeExpr, TypeExprRefPy
 from ..loc import Loc
 from ..visitor import Visitor
 
@@ -102,8 +102,9 @@ class ExecStmtScopeImpl(ExecStmtScope, ExecStmtImpl):
 
 @dc.dataclass
 class ExecImpl(Exec):
-    _stmts : List[ExecStmt] = dc.field(default_factory=list)
     _loc : Optional[Loc] = dc.field(default=None)
+    _stmts : List[ExecStmt] = dc.field(default_factory=list)
+    _ref : Optional[TypeExprRefPy] = dc.field(default=None)
 
     @property
     def loc(self) -> Optional[Loc]:
@@ -121,6 +122,10 @@ class ExecImpl(Exec):
 
     def getStmt(self, i : int) -> ExecStmt:
         return self._stmts[i]
+    
+    @property
+    def ref(self) -> Optional[TypeExprRefPy]:
+        return self._ref
     
     def accept(self, v : Visitor) -> None:
         v.visitExec(self)

@@ -66,6 +66,14 @@ class TypeExprBin(ABC, Accept):
 class TypeExprRef(Accept):
     pass
 
+class TypeExprRefPy(Accept):
+
+    @property
+    @abstractmethod
+    def ref(self) -> str: ...
+
+    pass
+
 class TypeExprRefBottomUp(ABC, Accept):
     @property
     @abstractmethod
