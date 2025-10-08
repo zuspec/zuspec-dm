@@ -84,6 +84,14 @@ class DataTypeStructImpl(DataTypeStruct):
         return self._name
 
     @property
+    def leafname(self) -> str:
+        idx = self._name.rfind('.')
+        if idx != -1:
+            return self._name[idx+1:]
+        else:
+            return self._name
+
+    @property
     def fields(self) -> Iterator[TypeField]:
         return self._fields.__iter__()
     

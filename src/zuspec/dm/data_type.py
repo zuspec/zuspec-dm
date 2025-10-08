@@ -41,6 +41,10 @@ class DataTypeStruct(DataType):
 
     @property
     @abstractmethod
+    def leafname(self) -> str: ...
+
+    @property
+    @abstractmethod
     def fields(self) -> Iterator[TypeField]:
         ...
 
