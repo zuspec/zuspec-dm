@@ -48,6 +48,7 @@ class DataTypeStruct(DataType):
     def fields(self) -> Iterator[TypeField]:
         ...
 
+    @property
     @abstractmethod
     def numFields(self) -> int:
         ...

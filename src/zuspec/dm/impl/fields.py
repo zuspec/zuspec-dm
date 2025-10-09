@@ -37,3 +37,6 @@ class TypeFieldInOutImpl(TypeFieldInOut, TypeFieldImpl):
     @property
     def isOutput(self) -> bool: 
         return self._is_out
+
+    def accept(self, v : Visitor):
+        v.visitTypeFieldInOut(self)

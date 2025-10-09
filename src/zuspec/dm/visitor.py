@@ -120,6 +120,6 @@ class Visitor:
     def visitTypeField(self, obj : TypeField) -> None:
         obj.dataType.accept(self)
 
-    def visitTypeField(self, obj : TypeFieldInOut) -> None:
+    def visitTypeFieldInOut(self, obj : TypeFieldInOut) -> None:
         self.visitTypeField(obj)
 

@@ -94,7 +94,8 @@ class DataTypeStructImpl(DataTypeStruct):
     @property
     def fields(self) -> Iterator[TypeField]:
         return self._fields.__iter__()
-    
+
+    @property
     def numFields(self):
         return len(self._fields)
     
