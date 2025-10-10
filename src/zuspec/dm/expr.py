@@ -63,8 +63,20 @@ class TypeExprBin(ABC, Accept):
     @abstractmethod
     def op(self) -> BinOp: ...
 
-class TypeExprRef(Accept):
-    pass
+class TypeExprRef(Accept): ...
+
+class TypeExprRefSelf(TypeExprRef): ...
+
+class TypeExprRefField(TypeExprRef):
+
+    @property
+    @abstractmethod
+    def base(self) -> TypeExpr: ...
+
+    @property
+    @abstractmethod
+    def index(self) -> int: ... 
+
 
 class TypeExprRefPy(Accept):
 

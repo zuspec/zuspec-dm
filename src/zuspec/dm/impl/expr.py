@@ -20,6 +20,9 @@ from ..expr import (
     BinOp,
     TypeExpr,
     TypeExprBin,
+    TypeExprRef,
+    TypeExprRefField,
+    TypeExprRefSelf,
     TypeExprRefPy,
     TypeExprRefBottomUp,
     TypeExprRefTopDown,
@@ -56,6 +59,29 @@ class TypeExprBinImpl(TypeExprBin,TypeExprImpl):
 
     def accept(self, v: Visitor) -> None:
         v.visitTypeExprBin(self)
+
+@dc.dataclass
+class TypeExprRefFieldImpl(TypeExprRefField,TypeExprImpl): 
+    _base : TypeExpr = dc.field()
+    _index : int = dc.field()
+
+    @property
+    def base(self) -> TypeExpr:
+        return self._base
+
+    @property
+    def index(self) -> int:
+        return self._index
+    
+    def accept(self, v : Visitor) -> None:
+        v.visitTypeExprRefField(self)
+
+@dc.dataclass
+class TypeExprRefSelfImpl(TypeExprRefSelf,TypeExprImpl): 
+
+    def accept(self, v : Visitor) -> None:
+        v.visitTypeExprRefSelf(self)
+
 
 @dc.dataclass
 class TypeExprRefPyImpl(TypeExprRefPy,TypeExprImpl):

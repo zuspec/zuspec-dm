@@ -1,7 +1,8 @@
 
 from __future__ import annotations
 import abc
-from typing import Optional, List, Protocol, Iterable
+from typing import Iterator, Optional, List, Protocol, Iterator
+from .bindset import Bind, BindSet
 from .data_type import (
     DataType,
     DataTypeBitVector, DataTypeStruct, DataTypeExpr, DataTypeArray, 
@@ -16,6 +17,8 @@ from .exec import (
 from .expr import (
     TypeExpr,
     BinOp,
+    TypeExprRefField,
+    TypeExprRefSelf,
     TypeExprBin,
     TypeExprRefPy
 )
@@ -25,6 +28,12 @@ from .fields import (
 from .loc import Loc
 
 class Context(Protocol):
+
+    @abc.abstractmethod
+    def mkBind(self, lhs : Optional[TypeExpr], rhs : Optional[TypeExpr], loc : Optional[Loc] = None) -> Bind: ...
+
+    @abc.abstractmethod
+    def mkBindSet(self, binds : Optional[Iterator[Bind]] = None) -> BindSet: ...
 
     @abc.abstractmethod
     def addDataTypeStruct(self, t : DataTypeStruct): ...
@@ -121,6 +130,12 @@ class Context(Protocol):
                       loc : Optional[Loc] = None) -> TypeExprBin: ...
 
     @abc.abstractmethod
+    def mkTypeExprRefField(self, base : TypeExpr, index : int, loc : Optional[Loc] = None) -> TypeExprRefField: ...
+
+    @abc.abstractmethod
+    def mkTypeExprRefSelf(self, loc : Optional[Loc] = None) -> TypeExprRefSelf: ...
+
+    @abc.abstractmethod
     def mkTypeExprRefPy(self, ref: str, loc : Optional[Loc] = None) -> TypeExprRefPy: ...
 
     @abc.abstractmethod
@@ -133,7 +148,11 @@ class Context(Protocol):
     def mkTypeExprFieldRef(self, field: str) -> TypeExprFieldRef: ...
 
     @abc.abstractmethod
-    def mkTypeField(self, name : str, type : DataType) -> TypeField: ...
+    def mkTypeField(self, 
+                    name : str, 
+                    type : DataType,
+                    binds : Optional[BindSet] = None,
+                    loc : Optional[Loc] = None) -> TypeField: ...
 
     @abc.abstractmethod
     def mkTypeFieldInOut(self, name : str, type : DataType, is_out : bool) -> TypeFieldInOut: ...

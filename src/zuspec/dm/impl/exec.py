@@ -1,6 +1,7 @@
 
 import dataclasses as dc
 from typing import Iterator, List, Optional
+from .bindset import Bind
 from ..exec import (
     Exec, ExecStmt, ExecStmtAssign, ExecStmtExpr, ExecStmtScope, ExecSync,
     ExecStmtIf, ExecStmtIfElse

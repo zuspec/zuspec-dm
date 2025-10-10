@@ -1,7 +1,8 @@
 
 from __future__ import annotations
 import dataclasses as dc
-from typing import Dict, List, Optional, Iterable
+from typing import Dict, Iterator, List, Optional, Iterable
+from ..bindset import Bind, BindSet
 from ..context import Context as IContext
 from ..data_type import (
     DataTypeEnum, DataTypeList, DataTypePtr, DataTypeRef,
@@ -22,7 +23,9 @@ from ..expr import (
     TypeExpr,
     BinOp,
     TypeExprBin,
-    TypeExprRefPy
+    TypeExprRefPy,
+    TypeExprRefField,
+    TypeExprRefSelf
 )
 from .fields import (
     TypeField,
@@ -36,6 +39,18 @@ class Context(IContext):
     _bit_type_m : Dict[int,DataTypeBit] = dc.field(default_factory=dict)
     _int_type_m : Dict[int,DataTypeInt] = dc.field(default_factory=dict)
     _ext_type_m : Dict[str,DataTypeExtern] = dc.field(default_factory=dict)
+
+    def mkBind(self, lhs : Optional[TypeExpr], rhs : Optional[TypeExpr], loc : Optional[Loc] = None) -> Bind:
+        from .bindset import BindImpl
+        return BindImpl(loc, lhs, rhs)
+
+    def mkBindSet(self, binds : Optional[Iterator[Bind]] = None) -> BindSet:
+        from .bindset import BindSetImpl
+        bset = BindSetImpl()
+        if binds is not None:
+            for b in binds:
+                bset.addBind(b)
+        return bset
 
     def addDataTypeStruct(self, t : DataTypeStruct): 
         if t.name in self._struct_type_m.keys():
@@ -194,10 +209,23 @@ class Context(IContext):
         from zuspec.dm.impl.expr import TypeExprFieldRefImpl
         return TypeExprFieldRefImpl(field)
 
-    def mkTypeField(self, name : str, type : DataType) -> TypeField:
+    def mkTypeExprRefField(self, base : TypeExpr, index : int, loc : Optional[Loc] = None) -> TypeExprRefField:
+        from .expr import TypeExprRefFieldImpl
+        return TypeExprRefFieldImpl(loc, base, index)
+
+    def mkTypeExprRefSelf(self, loc : Optional[Loc] = None) -> TypeExprRefSelf:
+        from .expr import TypeExprRefSelfImpl
+        return TypeExprRefSelfImpl(loc)
+
+    def mkTypeField(self, 
+                    name : str, 
+                    type : DataType,
+                    binds : Optional[BindSet] = None,
+                    loc : Optional[Loc] = None) -> TypeField:
         from .fields import TypeFieldImpl
-        return TypeFieldImpl(name, type)
+        return TypeFieldImpl(name, type, binds, loc)
 
     def mkTypeFieldInOut(self, name : str, type : DataType, is_out : bool) -> TypeFieldInOut:
         from .fields import TypeFieldInOutImpl
-        return TypeFieldInOutImpl(name, type, is_out)
+        # TODO: loc
+        return TypeFieldInOutImpl(name, type, None, None, is_out)

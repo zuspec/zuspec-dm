@@ -2,6 +2,7 @@
 from __future__ import annotations
 import dataclasses as dc
 from typing import Optional, TYPE_CHECKING
+from ..bindset import BindSet
 from ..fields import TypeField, TypeFieldInOut
 from ..data_type import DataType
 from ..loc import Loc
@@ -13,6 +14,7 @@ if TYPE_CHECKING:
 class TypeFieldImpl(TypeField):
     _name : str = dc.field()
     _type : DataType = dc.field()
+    _bindset : Optional[BindSet] = dc.field()
     _loc : Optional[Loc] = dc.field(default=None)
 
     @property
@@ -22,6 +24,10 @@ class TypeFieldImpl(TypeField):
     @property
     def dataType(self) -> DataType: 
         return self._type
+
+    @property
+    def bindSet(self) -> Optional[BindSet]:
+        return self._bindset
 
     @property
     def loc(self) -> Optional[Loc]:

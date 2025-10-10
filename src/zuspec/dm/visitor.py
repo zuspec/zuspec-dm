@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     )
     from .expr import (
         TypeExprBin, TypeExprRefBottomUp, TypeExprRefTopDown, TypeExprFieldRef,
+        TypeExprRefField, TypeExprRefSelf,
         TypeExprRefPy
     )
     from .fields import TypeField, TypeFieldInOut
@@ -104,6 +105,10 @@ class Visitor:
 
     def visitTypeExprBin(self, obj: "TypeExprBin") -> None:
         pass
+
+    def visitTypeExprRefField(self, obj : TypeExprRefField) -> None: ...
+
+    def visitTypeExprRefSelf(self, obj : TypeExprRefSelf) -> None: ...
 
     def visitTypeExprRefPy(self, obj : TypeExprRefPy) -> None:
         pass
