@@ -27,6 +27,8 @@ from .expr import (
     TypeExpr,
     TypeExprBin,
     TypeExprRef,
+    TypeExprRefField,
+    TypeExprRefSelf,
     TypeExprRefBottomUp,
     TypeExprRefTopDown,
     TypeExprFieldRef
