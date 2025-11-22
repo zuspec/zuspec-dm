@@ -2,7 +2,6 @@ from __future__ import annotations
 import dataclasses as dc
 from typing import List, Optional, Protocol, TYPE_CHECKING, Iterator
 from .base import Base
-from .exec import Exec
 from .expr import Expr
 
 if TYPE_CHECKING:

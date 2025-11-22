@@ -27,11 +27,35 @@ def visitor(pmod, *args, **kwargs):
     return closure
 
 
-profile(__name__)
+
+# Re-export data model types
+from .fields import Bind, BindSet, Field, FieldInOut
+from .data_type import (
+    DataType, DataTypeInt, DataTypeStruct, DataTypeClass, DataTypeComponent,
+    DataTypeExpr, DataTypeEnum, DataTypeString
+)
+from .expr import (
+    Expr, BinOp, UnaryOp, BoolOp, CmpOp, AugOp,
+    ExprBin, ExprRef, ExprConstant, TypeExprRefSelf, ExprRefField, ExprRefPy,
+    ExprRefBottomUp, TypeExprRefTopDown, ExprUnary, ExprBool, ExprCompare,
+    ExprAttribute, ExprSlice, ExprSubscript, ExprCall, Keyword
+)
+from .stmt import (
+    Stmt, StmtExpr, StmtAssign, StmtAugAssign, StmtReturn, StmtIf, StmtFor,
+    StmtWhile, StmtBreak, StmtContinue, StmtPass, StmtRaise, StmtAssert, Alias, Arg, Arguments
+)
 
 __all__ = [
-    "profile",
-    "Base",
-    "BaseP",
-    "Visitor"
+    "profile","Base","BaseP","Visitor",
+    "Bind","BindSet","Field","FieldInOut",
+    "DataType","DataTypeInt","DataTypeStruct","DataTypeClass","DataTypeComponent",
+    "DataTypeExpr","DataTypeEnum","DataTypeString",
+    "Expr","BinOp","UnaryOp","BoolOp","CmpOp","AugOp","ExprBin","ExprRef","ExprConstant",
+    "TypeExprRefSelf","ExprRefField","ExprRefPy","ExprRefBottomUp","TypeExprRefTopDown","ExprUnary",
+    "ExprBool","ExprCompare","ExprAttribute","ExprSlice","ExprSubscript","ExprCall","Keyword",
+    "Stmt","StmtExpr","StmtAssign","StmtAugAssign","StmtReturn","StmtIf","StmtFor","StmtWhile",
+    "StmtBreak","StmtContinue","StmtPass","StmtRaise","StmtAssert","Alias","Arg","Arguments"
 ]
+
+# Important to place after all data-model classes have been imported
+profile(__name__)

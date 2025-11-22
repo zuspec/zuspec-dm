@@ -1,6 +1,7 @@
 
 import dataclasses as dc
 import inspect
+import logging
 import sys
 from typing import ClassVar, Dict, List, Type
 from types import ModuleType
@@ -12,11 +13,14 @@ class Profile(object):
     pkg : ModuleType = dc.field()
     types : List[Type[BaseP]] = dc.field(default_factory=list)
 
+
 class ProfileRgy(object):
     _profile_m : Dict[ModuleType, Profile] = {}
+    _log : ClassVar = logging.getLogger("zuspec.dm.ProfileRgy")
 
     @classmethod
     def register_profile(cls, modname, super):
+        cls._log.debug("--> register_profile %s %s" % (cls, modname))
         # Find the package containing 'modname'
         mod = sys.modules[modname]
         pkg = mod
@@ -36,6 +40,7 @@ class ProfileRgy(object):
             if obj.__module__.startswith(pkg.__name__):
                 if issubclass(obj, BaseP):
                     if obj.__name__ != "BaseP" and obj.__name__ not in profile_t.keys():
+                        cls._log.debug("Add type %s (%s)" % (obj.__name__, obj.__qualname__))
                         profile_t[obj.__name__] = obj
 
         ProfileRgy._profile_m[mod] = Profile(

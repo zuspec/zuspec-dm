@@ -1,10 +1,12 @@
 from __future__ import annotations
+import logging
 from typing import ClassVar, Dict, Type, Self, TYPE_CHECKING
 
 from .base import Base
 
 class Visitor:
     _type_impl_m : Dict[Type[Visitor],Type[Visitor]] = {}
+    _log : ClassVar = logging.getLogger("zuspec.dm.Visitor")
 
     def __new__(cls, pmod) -> Visitor:
         if pmod is None:
@@ -30,7 +32,7 @@ class Visitor:
                     fields["visit%s" % t.__name__] = getattr(cls, "visit%s" % t.__name__)
                 else:
                     print("Must define %s" % t.__name__)
-                    fields["visit%s" % t.__name__] = lambda self,o: o.visitDefault(self)
+                    fields["visit%s" % t.__name__] = lambda self,o,cls=t: Visitor.visitDefault(self, o, t)
 
             fields["__new__"] = lambda cls,pmod=None: super().__new__(cls)
 
@@ -44,6 +46,16 @@ class Visitor:
             Visitor._type_impl_m[cls] = impl
 
             return impl()
+        
+    @staticmethod
+    def visitDefault(self : Visitor, obj : Base, cls : Type):
+        self._log.debug("--> visitDefault virt=%s" % cls.__name__)
+        if type(self) == cls:
+            obj.accept(self)
+        else:
+            obj.visitDefault(self, cls)
+        self._log.debug("<-- visitDefault virt=%s" % cls.__name__)
+
         
     # def __init__(self, pmod):
     #     pass

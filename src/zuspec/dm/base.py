@@ -1,9 +1,13 @@
 from __future__ import annotations
 import dataclasses as dc
-from typing import TYPE_CHECKING, Protocol, cast, runtime_checkable, Optional, Any
+import inspect
+import logging
+from typing import TYPE_CHECKING, Protocol, cast, runtime_checkable, Optional, Any, Type
 
 if TYPE_CHECKING:
     from .visitor import Visitor
+
+_log = logging.getLogger("zuspec.dm.Base")
 
 @dc.dataclass
 class Loc(object):
@@ -15,7 +19,7 @@ class Loc(object):
 @runtime_checkable
 class BaseP(Protocol):
 
-    def visitDefault(self, v : Visitor): ...
+    def visitDefault(self, v : Visitor, cls : Type): ...
 
     def accept(self, v : Visitor): ...
 
@@ -26,29 +30,37 @@ class BaseP(Protocol):
 class Base(BaseP):
     loc : Optional[Loc] = dc.field(default=None)
 
-    def visitDefault(self, v : Visitor):
-        print("visitDefault")
+    def visitDefault(self, v : Visitor, cls : Optional[Type] = None):
+        _log.debug("visitDefault %s %s" % (
+            str(type(self).__name__), 
+            (cls.__name__ if cls is not None else "None")))
 
         # Handle bases first
-        for b in type(self).__bases__:
-            if issubclass(b, BaseP):
-                getattr(v, "visit%s" % b.__name__)(self)
+        if cls is not None:
+            for b in cls.__bases__:
+                if issubclass(b, BaseP):
+                    _log.debug("Visit base class %s" % b.__name__)
+                    getattr(v, "visit%s" % b.__name__)(self)
 
         # Iterate through the fields and dynamically handle
         for f in dc.fields(self):
+            _log.debug("Processing field %s (%s)" % (f.name, f.type))
             o = getattr(self, f.name)
-            if f.type in [int, str]:
-                pass
-            elif isinstance(f.type, type):
-                if issubclass(f.type, list):
-                    pass
-                elif issubclass(f.type, Base):
-                    if o is not None:
-                        cast(BaseP, o).accept(v)
-            pass
-        pass
+            _log.debug("o: %s (%s)" % (str(o), type(o)))
+            if inspect.isclass(type(o)):
+                _log.debug("isclass")
+                if isinstance(o, BaseP):
+                    _log.debug("o isBaseP")
+                    cast(BaseP, o).accept(v)
+                elif isinstance(o, list):
+                    _log.debug("islist")
+                    for e in o:
+                        _log.debug("  e: %s" % str(e))
+                        if e is not None and inspect.isclass(type(e)) and isinstance(e, BaseP):
+                            _log.debug("isBaseP")
+                            cast(BaseP, e).accept(v)
 
-    def accept(self, v : Visitor):
+    def accept(self, v : Visitor, virt : bool=True):
         getattr(v, "visit%s" % type(self).__name__)(self)
 
     def getLoc(self) -> Optional[Loc]:
