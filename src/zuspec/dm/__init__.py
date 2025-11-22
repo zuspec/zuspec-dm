@@ -1,79 +1,37 @@
+import dataclasses as dc
+from typing import dataclass_transform
 
-from . import impl
-from .context import Context
+def profile(modname, super=None):
+    """Register a profile"""
+    from .profile_rgy import ProfileRgy
+    ProfileRgy.register_profile(modname, super)
 
-from .data_type import (
-    DataType,
-    DataTypeBitVector,
-    DataTypeComponent,
-    DataTypeStruct,
-    DataTypeExpr,
-    DataTypeArray,
-    DataTypeBool,
-    DataTypeEnum,
-    DataTypeList,
-    DataTypePtr,
-    DataTypeRef,
-    DataTypeString,
-    TypeConstraintBlock,
-    TypeConstraintExpr,
-    TypeConstraintIfElse
-)
-from .exec import (
-    ExecStmt, ExecStmtAssign, ExecStmtExpr, ExecStmtIf,
-    ExecStmtIfElse, ExecStmtScope, Exec, ExecSync
-)
-from .expr import (
-    TypeExpr,
-    TypeExprBin,
-    TypeExprRef,
-    TypeExprRefField,
-    TypeExprRefSelf,
-    TypeExprRefBottomUp,
-    TypeExprRefTopDown,
-    TypeExprFieldRef
-)
-from .fields import (
-    TypeField,
-    TypeFieldInOut
-)
-from .loc import Loc
 
+from .base import Base, BaseP
 from .visitor import Visitor
 
+@dataclass_transform()
+def visitor_dataclass(pmod, *args, **kwargs):
+    """Decorator for datamodel Visitor class"""
+    def closure(T):
+        c = dc.dataclass(T, *args, **kwargs)
+        setattr(c, "__new__", lambda cls,pmod=pmod: Visitor.__new__(cls,pmod))
+        return c
+    return closure
+
+def visitor(pmod, *args, **kwargs):
+    """Decorator for non-datamodel Visitor class"""
+    def closure(T):
+        setattr(T, "__new__", lambda cls,pmod=pmod: Visitor.__new__(cls,pmod))
+        return T
+    return closure
+
+
+profile(__name__)
+
 __all__ = [
-    "Context",
-    "Loc",
-    "DataType",
-    "DataTypeBitVector",
-    "DataTypeComponent",
-    "DataTypeStruct",
-    "DataTypeExpr",
-    "DataTypeArray",
-    "DataTypeBool",
-    "DataTypeEnum",
-    "DataTypeList",
-    "DataTypePtr",
-    "DataTypeRef",
-    "DataTypeString",
-    "ExecStmt", 
-    "ExecStmtAssign",
-    "ExecStmtExpr", 
-    "ExecStmtIf",
-    "ExecStmtIfElse", 
-    "ExecStmtScope", 
-    "Exec", 
-    "ExecSync",
-    "TypeConstraintBlock",
-    "TypeConstraintExpr",
-    "TypeConstraintIfElse",
-    "TypeExpr",
-    "TypeExprBin",
-    "TypeExprRef",
-    "TypeExprRefBottomUp",
-    "TypeExprRefTopDown",
-    "TypeExprFieldRef",
-    "TypeField",
-    "TypeFieldInOut",
+    "profile",
+    "Base",
+    "BaseP",
     "Visitor"
 ]

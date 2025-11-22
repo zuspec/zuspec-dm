@@ -14,6 +14,8 @@
 # limitations under the License.
 #****************************************************************************
 from __future__ import annotations
+import dataclasses as dc
+from .base import Base
 import abc
 import enum
 from abc import ABC, abstractmethod
@@ -24,11 +26,8 @@ from .loc import Loc
 if TYPE_CHECKING:
     from .visitor import Visitor
 
-class TypeExpr(Accept):
-
-    @property
-    @abc.abstractmethod
-    def loc(self) -> Optional[Loc]: ...
+@dc.dataclass(kw_only=True)
+class Expr(Base): pass
 
 class BinOp(enum.Enum):
     Add = enum.auto()
@@ -50,47 +49,37 @@ class BinOp(enum.Enum):
     And = enum.auto()
     Or = enum.auto()
 
-class TypeExprBin(ABC, Accept):
-    @property
-    @abstractmethod
-    def lhs(self) -> TypeExpr: ...
+@dc.dataclass(kw_only=True)
+class ExprBin(Expr):
+    lhs : Expr = dc.field()
+    op : BinOp = dc.field()
+    rhs : Expr = dc.field()
 
-    @property
-    @abstractmethod
-    def rhs(self) -> TypeExpr: ...
+@dc.dataclass(kw_only=True)
+class ExprRef(Expr): ...
 
-    @property
-    @abstractmethod
-    def op(self) -> BinOp: ...
+@dc.dataclass
+class TypeExprRefSelf(ExprRef): 
+    """Reference to 'self'"""
+    ...
 
-class TypeExprRef(Accept): ...
-
-class TypeExprRefSelf(TypeExprRef): ...
-
-class TypeExprRefField(TypeExprRef):
-
-    @property
-    @abstractmethod
-    def base(self) -> TypeExpr: ...
-
-    @property
-    @abstractmethod
-    def index(self) -> int: ... 
+@dc.dataclass(kw_only=True)
+class ExprRefField(ExprRef):
+    """Reference to a field relative to the base expression"""
+    base : Expr = dc.field()
+    index : int = dc.field()
 
 
-class TypeExprRefPy(Accept):
+@dc.dataclass(kw_only=True)
+class ExprRefPy(ExprRef):
+    """Reference relative to a Python object (base)"""
+    base : Expr = dc.field()
+    ref : str = dc.field()
 
-    @property
-    @abstractmethod
-    def ref(self) -> str: ...
-
-    pass
-
-class TypeExprRefBottomUp(ABC, Accept):
-    @property
-    @abstractmethod
-    def ref(self) -> str:
-        ...
+class ExprRefBottomUp(ExprRef):
+    """Reference to a field relative to the active procedural scope"""
+    uplevel : int = dc.field(default=0)
+    index : int = dc.field()
 
 class TypeExprRefTopDown(ABC, Accept):
     @property
@@ -98,8 +87,3 @@ class TypeExprRefTopDown(ABC, Accept):
     def ref(self) -> str:
         ...
 
-class TypeExprFieldRef(ABC, Accept):
-    @property
-    @abstractmethod
-    def field(self) -> str:
-        ...

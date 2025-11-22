@@ -7,4 +7,6 @@ package:
     deps:
     - name: zuspec-dev-docs
       url: https://github.com/zuspec/zuspec-dev-docs.git
+    - name: pytest
+      src: pypi
 

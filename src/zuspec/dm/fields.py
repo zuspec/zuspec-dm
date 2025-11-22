@@ -1,29 +1,27 @@
 
 from __future__ import annotations
-import abc
-from typing import Optional
-from .accept import Accept
+import dataclasses as dc
+from typing import List
+from .base import Base
 from .data_type import DataType
-from .loc import Locatable
-from .bindset import BindSet
+from .expr import Expr
 
-class TypeField(Locatable):
+@dc.dataclass
+class Bind(Base):
+    lhs : Expr = dc.field()
+    rhs : Expr = dc.field()
 
-    @property
-    @abc.abstractmethod
-    def name(self) -> str: ...
+@dc.dataclass
+class BindSet(Base):
+    binds : List[Bind] = dc.field(default_factory=list)
 
-    @property
-    @abc.abstractmethod
-    def dataType(self) -> DataType: ...
+@dc.dataclass(kw_only=True)
+class Field(Base):
+    name : str = dc.field()
+    datatype : DataType = dc.field()
+    bindset : BindSet = dc.field(default_factory=BindSet)
 
-    @property
-    @abc.abstractmethod
-    def bindSet(self) -> Optional[BindSet]: ...
-
-class TypeFieldInOut(TypeField):
-
-    @property
-    @abc.abstractmethod
-    def isOutput(self) -> bool: ...
+@dc.dataclass(kw_only=True)
+class FieldInOut(Field):
+    is_out : bool = dc.field()
 
