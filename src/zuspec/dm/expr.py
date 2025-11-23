@@ -15,15 +15,9 @@
 #****************************************************************************
 from __future__ import annotations
 import dataclasses as dc
-from .base import Base
-
 import enum
-from abc import ABC, abstractmethod
-
 from typing import Optional
-
-
-
+from .base import Base
 
 
 @dc.dataclass(kw_only=True)
@@ -92,11 +86,11 @@ class ExprRefBottomUp(ExprRef):
     uplevel : int = dc.field(default=0)
     index : int = dc.field()
 
-class TypeExprRefTopDown(ABC):
-    @property
-    @abstractmethod
-    def ref(self) -> str:
-        ...
+# class TypeExprRefTopDown(ABC):
+#     @property
+#     @abstractmethod
+#     def ref(self) -> str:
+#         ...
 
 @dc.dataclass(kw_only=True)
 class ExprUnary(Expr):

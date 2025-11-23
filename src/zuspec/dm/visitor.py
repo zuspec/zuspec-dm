@@ -10,7 +10,6 @@ class Visitor:
 
     def __new__(cls, pmod) -> Visitor:
         if pmod is None:
-            print("TODO: constructing an actual class")
             return super().__new__(cls)
         elif cls in Visitor._type_impl_m.keys():
             return Visitor._type_impl_m[cls].__new__(cls, pmod)
@@ -36,7 +35,7 @@ class Visitor:
 
             fields["__new__"] = lambda cls,pmod=None: super().__new__(cls)
 
-            impl = type(
+            impl : Type[Visitor] = type(
                 cls.__qualname__, 
                 (cls,), 
                 fields)
@@ -45,7 +44,7 @@ class Visitor:
             print("cls: %s" % str(cls))
             Visitor._type_impl_m[cls] = impl
 
-            return impl()
+            return impl(None)
         
     @staticmethod
     def visitDefault(self : Visitor, obj : Base, cls : Type):
