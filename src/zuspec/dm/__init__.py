@@ -40,9 +40,16 @@ from .expr import (
     ExprRefBottomUp, TypeExprRefTopDown, ExprUnary, ExprBool, ExprCompare,
     ExprAttribute, ExprSlice, ExprSubscript, ExprCall, Keyword
 )
+from .expr_phase2 import (
+    ExprList, ExprTuple, ExprDict, ExprSet, Comprehension, ExprListComp,
+    ExprDictComp, ExprSetComp, ExprGeneratorExp, ExprIfExp, ExprLambda, ExprNamedExpr,
+    ExprJoinedStr, ExprFormattedValue
+)
 from .stmt import (
     Stmt, StmtExpr, StmtAssign, StmtAugAssign, StmtReturn, StmtIf, StmtFor,
-    StmtWhile, StmtBreak, StmtContinue, StmtPass, StmtRaise, StmtAssert, Alias, Arg, Arguments
+    StmtWhile, StmtBreak, StmtContinue, StmtPass, StmtRaise, StmtAssert, Alias, Arg, Arguments,
+    WithItem, StmtWith, StmtExceptHandler, StmtTry, TypeIgnore, Module,
+    StmtMatch, StmtMatchCase, Pattern, PatternValue, PatternAs, PatternOr, PatternSequence
 )
 
 __all__ = [
@@ -54,7 +61,11 @@ __all__ = [
     "TypeExprRefSelf","ExprRefField","ExprRefPy","ExprRefBottomUp","TypeExprRefTopDown","ExprUnary",
     "ExprBool","ExprCompare","ExprAttribute","ExprSlice","ExprSubscript","ExprCall","Keyword",
     "Stmt","StmtExpr","StmtAssign","StmtAugAssign","StmtReturn","StmtIf","StmtFor","StmtWhile",
-    "StmtBreak","StmtContinue","StmtPass","StmtRaise","StmtAssert","Alias","Arg","Arguments"
+    "StmtBreak","StmtContinue","StmtPass","StmtRaise","StmtAssert","Alias","Arg","Arguments",
+"ExprList","ExprTuple","ExprDict","ExprSet","Comprehension","ExprListComp","ExprDictComp",
+"ExprSetComp","ExprGeneratorExp","ExprIfExp","ExprLambda","ExprNamedExpr",
+"WithItem","StmtWith","StmtExceptHandler","StmtTry","TypeIgnore","Module",
+"ExprJoinedStr","ExprFormattedValue","StmtMatch","StmtMatchCase","Pattern","PatternValue","PatternAs","PatternOr","PatternSequence"
 ]
 
 # Important to place after all data-model classes have been imported

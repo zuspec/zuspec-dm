@@ -87,3 +87,70 @@ class StmtRaise(Stmt):
 class StmtAssert(Stmt):
     test: Expr = dc.field()
     msg: Optional[Expr] = dc.field(default=None)
+
+# Phase3: With/Try/Except + Phase2 module-level nodes
+@dc.dataclass(kw_only=True)
+class WithItem(Base):
+    context_expr: Expr = dc.field()
+    optional_vars: Optional[Expr] = dc.field(default=None)
+
+@dc.dataclass(kw_only=True)
+class StmtWith(Stmt):
+    items: List[WithItem] = dc.field(default_factory=list)
+    body: List[Stmt] = dc.field(default_factory=list)
+
+@dc.dataclass(kw_only=True)
+class StmtExceptHandler(Base):
+    type: Optional[Expr] = dc.field(default=None)
+    name: Optional[str] = dc.field(default=None)
+    body: List[Stmt] = dc.field(default_factory=list)
+
+@dc.dataclass(kw_only=True)
+class StmtTry(Stmt):
+    body: List[Stmt] = dc.field(default_factory=list)
+    handlers: List[StmtExceptHandler] = dc.field(default_factory=list)
+    orelse: List[Stmt] = dc.field(default_factory=list)
+    finalbody: List[Stmt] = dc.field(default_factory=list)
+
+@dc.dataclass(kw_only=True)
+class TypeIgnore(Base):
+    lineno: int = dc.field()
+    tag: str = dc.field()
+
+@dc.dataclass(kw_only=True)
+class Module(Base):
+    body: List[Stmt] = dc.field(default_factory=list)
+    type_ignores: List[TypeIgnore] = dc.field(default_factory=list)
+
+# Phase4: Pattern Matching
+@dc.dataclass(kw_only=True)
+class StmtMatch(Stmt):
+    subject: Expr = dc.field()
+    cases: List['StmtMatchCase'] = dc.field(default_factory=list)
+
+@dc.dataclass(kw_only=True)
+class StmtMatchCase(Base):
+    pattern: 'Pattern' = dc.field()
+    guard: Optional[Expr] = dc.field(default=None)
+    body: List[Stmt] = dc.field(default_factory=list)
+
+@dc.dataclass(kw_only=True)
+class Pattern(Base):
+    pass
+
+@dc.dataclass(kw_only=True)
+class PatternValue(Pattern):
+    value: Expr = dc.field()
+
+@dc.dataclass(kw_only=True)
+class PatternAs(Pattern):
+    pattern: Optional[Pattern] = dc.field(default=None)
+    name: Optional[str] = dc.field(default=None)
+
+@dc.dataclass(kw_only=True)
+class PatternOr(Pattern):
+    patterns: List[Pattern] = dc.field(default_factory=list)
+
+@dc.dataclass(kw_only=True)
+class PatternSequence(Pattern):
+    patterns: List[Pattern] = dc.field(default_factory=list)

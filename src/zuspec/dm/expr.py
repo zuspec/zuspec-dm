@@ -136,42 +136,4 @@ class ExprCall(Expr):
     args: list[Expr] = dc.field(default_factory=list)
     keywords: list[Keyword] = dc.field(default_factory=list)
 
-# Phase1 additional expression nodes
-@dc.dataclass(kw_only=True)
-class ExprUnary(Expr):
-    op: enum.Enum = dc.field()
-    operand: Expr = dc.field()
-
-@dc.dataclass(kw_only=True)
-class ExprBool(Expr):
-    op: enum.Enum = dc.field()
-    values: list[Expr] = dc.field(default_factory=list)
-
-@dc.dataclass(kw_only=True)
-class ExprCompare(Expr):
-    left: Expr = dc.field()
-    ops: list[enum.Enum] = dc.field(default_factory=list)
-    comparators: list[Expr] = dc.field(default_factory=list)
-
-@dc.dataclass(kw_only=True)
-class ExprAttribute(Expr):
-    value: Expr = dc.field()
-    attr: str = dc.field()
-
-@dc.dataclass(kw_only=True)
-class ExprSlice(Expr):
-    lower: Optional[Expr] = dc.field(default=None)
-    upper: Optional[Expr] = dc.field(default=None)
-    step: Optional[Expr] = dc.field(default=None)
-
-@dc.dataclass(kw_only=True)
-class ExprSubscript(Expr):
-    value: Expr = dc.field()
-    slice: ExprSlice = dc.field()
-
-@dc.dataclass(kw_only=True)
-class ExprCall(Expr):
-    func: Expr = dc.field()
-    args: list[Expr] = dc.field(default_factory=list)
-    keywords: list[Keyword] = dc.field(default_factory=list)
 
