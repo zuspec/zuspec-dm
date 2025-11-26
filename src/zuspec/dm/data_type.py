@@ -11,6 +11,16 @@ if TYPE_CHECKING:
 class DataType(Base): ...
 
 @dc.dataclass(kw_only=True)
+class DataTypePyObj(Base): 
+    """Opaque Python object"""
+    ...
+
+@dc.dataclass(kw_only=True)
+class DataTypePyClass(DataTypePyObj):
+    """Known Python class type"""
+    qname : str = dc.field()
+
+@dc.dataclass(kw_only=True)
 class DataTypeInt(DataType):
     bits : int = dc.field(default=-1)
     signed : bool = dc.field(default=True)

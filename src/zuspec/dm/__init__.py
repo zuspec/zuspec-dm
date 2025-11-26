@@ -8,6 +8,7 @@ def profile(modname, super=None):
 
 
 from .base import Base, BaseP
+from .context import Context
 from .visitor import Visitor
 
 @dataclass_transform()
@@ -65,7 +66,8 @@ __all__ = [
 "ExprList","ExprTuple","ExprDict","ExprSet","Comprehension","ExprListComp","ExprDictComp",
 "ExprSetComp","ExprGeneratorExp","ExprIfExp","ExprLambda","ExprNamedExpr",
 "WithItem","StmtWith","StmtExceptHandler","StmtTry","TypeIgnore","Module",
-"ExprJoinedStr","ExprFormattedValue","StmtMatch","StmtMatchCase","Pattern","PatternValue","PatternAs","PatternOr","PatternSequence"
+"ExprJoinedStr","ExprFormattedValue","StmtMatch","StmtMatchCase","Pattern","PatternValue","PatternAs","PatternOr","PatternSequence",
+"Context"
 ]
 
 # Important to place after all data-model classes have been imported
