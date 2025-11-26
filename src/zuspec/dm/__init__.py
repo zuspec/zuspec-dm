@@ -37,7 +37,7 @@ from .data_type import (
 from .expr import (
     Expr, BinOp, UnaryOp, BoolOp, CmpOp, AugOp,
     ExprBin, ExprRef, ExprConstant, TypeExprRefSelf, ExprRefField, ExprRefPy,
-    ExprRefBottomUp, TypeExprRefTopDown, ExprUnary, ExprBool, ExprCompare,
+    ExprRefBottomUp, ExprUnary, ExprBool, ExprCompare,
     ExprAttribute, ExprSlice, ExprSubscript, ExprCall, Keyword
 )
 from .expr_phase2 import (
@@ -58,7 +58,7 @@ __all__ = [
     "DataType","DataTypeInt","DataTypeStruct","DataTypeClass","DataTypeComponent",
     "DataTypeExpr","DataTypeEnum","DataTypeString",
     "Expr","BinOp","UnaryOp","BoolOp","CmpOp","AugOp","ExprBin","ExprRef","ExprConstant",
-    "TypeExprRefSelf","ExprRefField","ExprRefPy","ExprRefBottomUp","TypeExprRefTopDown","ExprUnary",
+    "TypeExprRefSelf","ExprRefField","ExprRefPy","ExprRefBottomUp","ExprUnary",
     "ExprBool","ExprCompare","ExprAttribute","ExprSlice","ExprSubscript","ExprCall","Keyword",
     "Stmt","StmtExpr","StmtAssign","StmtAugAssign","StmtReturn","StmtIf","StmtFor","StmtWhile",
     "StmtBreak","StmtContinue","StmtPass","StmtRaise","StmtAssert","Alias","Arg","Arguments",
@@ -70,3 +70,5 @@ __all__ = [
 
 # Important to place after all data-model classes have been imported
 profile(__name__)
+
+from . import fe
